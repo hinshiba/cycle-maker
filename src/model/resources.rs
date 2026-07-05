@@ -76,6 +76,8 @@ pub enum Outcome {
     Victory { turn: u32 },
     /// プレイヤー倒産
     Bankrupt { turn: u32 },
+    /// 他企業が目標資本金に到達
+    RivalVictory { turn: u32 },
 }
 
 #[derive(Resource, Default)]
