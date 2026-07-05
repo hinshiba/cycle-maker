@@ -141,8 +141,14 @@ fn draw_ui(
                     ui.label(format!("目標資本金に到達しました（{turn} ターン）"));
                 }
                 Outcome::Bankrupt { turn } => {
-                    ui.heading("倒産…");
+                    ui.heading("倒産......");
                     ui.label(format!("資金がマイナスになりました（{turn} ターン）"));
+                }
+                Outcome::RivalVictory { turn } => {
+                    ui.heading("ライバル企業の勝利......");
+                    ui.label(format!(
+                        "ライバル企業が先に目標資本金に到達しました（{turn} ターン）"
+                    ));
                 }
             });
     }

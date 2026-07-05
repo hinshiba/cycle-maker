@@ -45,10 +45,11 @@ impl Plugin for SimulationPlugin {
                     market::clear_bikes_market, // 4. 自転車市場約定
                     sales::retail_sales,        // 5. 最終販売
                     upkeep::charge_upkeep,      // 6. 維持費徴収
-                    bankruptcy::judge,          // 7. 倒産・勝敗判定
-                    ai::npc_decide,             // 8. NPC意思決定
-                    record_player_ledger,       // プレイヤー財務指標の集計（UI用）
-                    record_price_history,       // 市場価格の推移を記録（UI用）
+                    bankruptcy::player_judge,   // 7. 倒産・勝敗判定
+                    bankruptcy::npc_judge,
+                    ai::npc_decide,       // 8. NPC意思決定
+                    record_player_ledger, // プレイヤー財務指標の集計（UI用）
+                    record_price_history, // 市場価格の推移を記録（UI用）
                     finish_turn,
                 )
                     .chain(),
