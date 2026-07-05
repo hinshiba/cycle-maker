@@ -27,24 +27,28 @@ impl Plugin for SimulationPlugin {
         app.init_state::<GameState>()
             .insert_resource(TurnCounter::default())
             .insert_resource(GameRng(ChaCha8Rng::seed_from_u64(self.seed)))
-            .insert_resource(DemandCurve::from_constants(self.seed.wrapping_mul(0x5DEECE66D)))
+            .insert_resource(DemandCurve::from_constants(
+                self.seed.wrapping_mul(0x5DEECE66D),
+            ))
             .insert_resource(Markets::default())
             .init_resource::<GameResult>()
             .init_resource::<PlayerStats>()
             .init_resource::<PlayerLedger>()
+            .init_resource::<PriceHistory>()
             .add_systems(Startup, setup_companies)
             .add_systems(
                 OnEnter(GameState::Resolving),
                 (
-                    upgrade::advance_upgrades,   // 1. 改良進行
-                    production::produce,         // 2. 生産
-                    market::clear_parts_market,  // 3. 部品市場約定
-                    market::clear_bikes_market,  // 4. 自転車市場約定
-                    sales::retail_sales,         // 5. 最終販売
-                    upkeep::charge_upkeep,       // 6. 維持費徴収
-                    bankruptcy::judge,           // 7. 倒産・勝敗判定
-                    ai::npc_decide,              // 8. NPC意思決定
-                    record_player_ledger,        // プレイヤー財務指標の集計（UI用）
+                    upgrade::advance_upgrades,  // 1. 改良進行
+                    production::produce,        // 2. 生産
+                    market::clear_parts_market, // 3. 部品市場約定
+                    market::clear_bikes_market, // 4. 自転車市場約定
+                    sales::retail_sales,        // 5. 最終販売
+                    upkeep::charge_upkeep,      // 6. 維持費徴収
+                    bankruptcy::judge,          // 7. 倒産・勝敗判定
+                    ai::npc_decide,             // 8. NPC意思決定
+                    record_player_ledger,       // プレイヤー財務指標の集計（UI用）
+                    record_price_history,       // 市場価格の推移を記録（UI用）
                     finish_turn,
                 )
                     .chain(),
@@ -55,8 +59,12 @@ impl Plugin for SimulationPlugin {
 /// 初期構成: 供給×3、製造×3（うち1がプレイヤー）、販売×3
 fn setup_companies(mut commands: Commands, mut rng: ResMut<GameRng>) {
     let random_traits = |rng: &mut GameRng| AiTraits {
-        aggressiveness: rng.0.random_range(AI_AGGRESSIVENESS_RANGE.0..=AI_AGGRESSIVENESS_RANGE.1),
-        invest_bias: rng.0.random_range(AI_INVEST_BIAS_RANGE.0..=AI_INVEST_BIAS_RANGE.1),
+        aggressiveness: rng
+            .0
+            .random_range(AI_AGGRESSIVENESS_RANGE.0..=AI_AGGRESSIVENESS_RANGE.1),
+        invest_bias: rng
+            .0
+            .random_range(AI_INVEST_BIAS_RANGE.0..=AI_INVEST_BIAS_RANGE.1),
         margin: rng.0.random_range(AI_MARGIN_RANGE.0..=AI_MARGIN_RANGE.1),
     };
 
@@ -129,6 +137,12 @@ fn record_player_ledger(
         ledger.last_delta = wallet.0 - ledger.prev_wallet;
         ledger.prev_wallet = wallet.0;
     }
+}
+
+/// 両市場の直近約定価格を推移に追記する（約定後に呼ぶ前提）。UI表示専用
+fn record_price_history(markets: Res<Markets>, mut history: ResMut<PriceHistory>) {
+    history.parts.push(markets.parts.last_price);
+    history.bikes.push(markets.bikes.last_price);
 }
 
 /// ターン終端: カウンタを進め、勝敗が付いていれば GameOver、なければ入力待ちへ戻す

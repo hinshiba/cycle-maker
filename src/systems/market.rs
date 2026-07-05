@@ -3,7 +3,7 @@
 
 use bevy::prelude::*;
 
-use crate::core::auction::{clear, Order, Trade};
+use crate::core::auction::{Order, Trade, clear};
 use crate::model::components::*;
 use crate::model::market::Good;
 use crate::model::resources::{Markets, PlayerStats};
@@ -108,7 +108,13 @@ pub fn clear_parts_market(
     if let Some(clearing) = clear(&bids, &asks) {
         markets.parts.last_price = clearing.price;
         markets.parts.volume = clearing.volume;
-        settle(&clearing.trades, clearing.price, Good::Parts, &mut companies, &mut stats);
+        settle(
+            &clearing.trades,
+            clearing.price,
+            Good::Parts,
+            &mut companies,
+            &mut stats,
+        );
     } else {
         markets.parts.volume = 0;
     }
@@ -155,7 +161,13 @@ pub fn clear_bikes_market(
     if let Some(clearing) = clear(&bids, &asks) {
         markets.bikes.last_price = clearing.price;
         markets.bikes.volume = clearing.volume;
-        settle(&clearing.trades, clearing.price, Good::Bikes, &mut companies, &mut stats);
+        settle(
+            &clearing.trades,
+            clearing.price,
+            Good::Bikes,
+            &mut companies,
+            &mut stats,
+        );
     } else {
         markets.bikes.volume = 0;
     }

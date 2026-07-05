@@ -74,8 +74,9 @@ pub fn npc_decide(
                 let dev_bikes = (inv.bikes as f32 - bike_target) / bike_target;
                 let unit_cost = fac.efficiency * last_parts as f32 + fac.run_cost;
                 let floor = (unit_cost * 1.02) as i64;
-                policy.min_sell =
-                    ((last_bikes as f32 * (1.0 - k * dev_bikes.clamp(-1.0, 1.0))) as i64).max(floor);
+                policy.min_sell = ((last_bikes as f32 * (1.0 - k * dev_bikes.clamp(-1.0, 1.0)))
+                    as i64)
+                    .max(floor);
             }
             CompanyKind::Retailer => {
                 // 結果からのルールベース適応（需要関数は読めない前提）
@@ -92,13 +93,13 @@ pub fn npc_decide(
                             // 売れ残り超過 → 値下げ・買付量↓
                             policy.min_sell =
                                 ((policy.min_sell as f32 * (1.0 - delta)) as i64).max(1);
-                            policy.target_stock_turns = policy.target_stock_turns.saturating_sub(1).max(1);
+                            policy.target_stock_turns =
+                                policy.target_stock_turns.saturating_sub(1).max(1);
                         }
                     }
                 }
                 // 買付指値の上限 = 現販売価格 − 目標マージン
-                policy.max_buy =
-                    ((policy.min_sell as f32 * (1.0 - traits.margin)) as i64).max(1);
+                policy.max_buy = ((policy.min_sell as f32 * (1.0 - traits.margin)) as i64).max(1);
             }
         }
 
@@ -111,8 +112,8 @@ pub fn npc_decide(
                 let improved = param.improved(fac, &baseline.0);
                 let gain = expected_total(param.base_k(), cost as f32, improved, turns);
                 // 粗ROI = 改善量 × 金額換算 × 想定回収期間 − 投資総額
-                let score =
-                    gain * AI_ROI_WEIGHT[param.index()] * AI_ROI_HORIZON - (cost * i64::from(turns)) as f32;
+                let score = gain * AI_ROI_WEIGHT[param.index()] * AI_ROI_HORIZON
+                    - (cost * i64::from(turns)) as f32;
                 if score > 0.0 && best.map(|(_, s)| score > s).unwrap_or(true) {
                     best = Some((param, score));
                 }

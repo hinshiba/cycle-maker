@@ -4,10 +4,10 @@
 use bevy::prelude::*;
 use bevy::state::app::StatesPlugin;
 
+use cycle_maker::SimulationPlugin;
 use cycle_maker::model::components::*;
 use cycle_maker::model::resources::*;
 use cycle_maker::states::GameState;
-use cycle_maker::SimulationPlugin;
 
 fn main() {
     let mut app = App::new();
@@ -28,7 +28,9 @@ fn main() {
         margin: 0.2,
     });
 
-    println!("turn | parts(価格/出来高) | bikes(価格/出来高) | 企業資金(供給/製造/販売の平均) | 倒産");
+    println!(
+        "turn | parts(価格/出来高) | bikes(価格/出来高) | 企業資金(供給/製造/販売の平均) | 倒産"
+    );
     for i in 0..100 {
         if app.world().resource::<GameResult>().0.is_some() {
             break;

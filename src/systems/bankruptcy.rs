@@ -17,9 +17,13 @@ pub fn judge(
     for (entity, wallet, player) in &q {
         if player.is_some() {
             if wallet.0 >= GOAL_FUNDS {
-                result.0.get_or_insert(Outcome::Victory { turn: turn.0 + 1 });
+                result
+                    .0
+                    .get_or_insert(Outcome::Victory { turn: turn.0 + 1 });
             } else if wallet.0 < 0 {
-                result.0.get_or_insert(Outcome::Bankrupt { turn: turn.0 + 1 });
+                result
+                    .0
+                    .get_or_insert(Outcome::Bankrupt { turn: turn.0 + 1 });
             }
         } else if wallet.0 < 0 {
             // NPCは倒産マーカーで全システムから除外（UIには倒産と表示）

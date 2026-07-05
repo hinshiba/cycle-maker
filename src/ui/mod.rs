@@ -1,6 +1,10 @@
-//! egui による UI（§10）
-//! 上: ターン/進捗/ターン終了、左: 自社パネル、中央: 市場、右: 企業一覧
-//! egui 0.35 のパネルはルート Ui に対して追加するため、1つのシステムで全パネルを描く
+//! eguiによるUIモジュール
+//! 上: ターン/進捗/ターン終了
+//! 左: 自社パネル
+//! 中央: 市場
+//! 右: 企業一覧
+//! egui0.35のパネルはルートUIに対して追加するため
+//! 1つのシステムで全パネルを描く
 
 pub mod companies_panel;
 pub mod market_panel;
@@ -8,7 +12,7 @@ pub mod player_panel;
 pub mod top_bar;
 
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContexts, EguiPrimaryContextPass};
+use bevy_egui::{EguiContexts, EguiPrimaryContextPass, egui};
 
 use crate::audio::NextTurnSfx;
 use crate::model::components::*;
@@ -93,6 +97,7 @@ fn draw_ui(
     markets: Res<Markets>,
     stats: Res<PlayerStats>,
     ledger: Res<PlayerLedger>,
+    price_history: Res<PriceHistory>,
     mut player: PlayerQuery,
     companies: CompaniesQuery,
 ) -> Result {
@@ -113,9 +118,16 @@ fn draw_ui(
         next.set(GameState::Resolving);
         sfx.write(NextTurnSfx);
     }
-    player_panel::draw(&mut root, &mut commands, &mut draft, &mut player, &ledger, &markets);
+    player_panel::draw(
+        &mut root,
+        &mut commands,
+        &mut draft,
+        &mut player,
+        &ledger,
+        &markets,
+    );
     companies_panel::draw(&mut root, &companies);
-    market_panel::draw(&mut root, &markets, &stats); // 中央は最後
+    market_panel::draw(&mut root, &markets, &stats, &price_history); // 中央は最後
 
     // 勝敗が付いたら中央にオーバーレイ表示
     if let Some(outcome) = result.0 {
@@ -125,7 +137,7 @@ fn draw_ui(
             .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
             .show(ctx, |ui| match outcome {
                 Outcome::Victory { turn } => {
-                    ui.heading("🏆 勝利！");
+                    ui.heading("勝利！");
                     ui.label(format!("目標資本金に到達しました（{turn} ターン）"));
                 }
                 Outcome::Bankrupt { turn } => {

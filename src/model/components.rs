@@ -124,9 +124,7 @@ impl FacilityParam {
             FacilityParam::FixedCost => f.fixed_cost = (f.fixed_cost - delta).max(MIN_FIXED_COST),
             FacilityParam::RunCost => f.run_cost = (f.run_cost - delta).max(MIN_RUN_COST),
             FacilityParam::Defect => f.defect = (f.defect - delta).max(MIN_DEFECT),
-            FacilityParam::Efficiency => {
-                f.efficiency = (f.efficiency - delta).max(MIN_EFFICIENCY)
-            }
+            FacilityParam::Efficiency => f.efficiency = (f.efficiency - delta).max(MIN_EFFICIENCY),
         }
     }
 

@@ -27,8 +27,16 @@ pub struct Clearing<Id> {
 /// 板寄せ: 買いを価格降順・売りを価格昇順に並べ、交差する範囲を最大量マッチングする。
 /// 約定価格は限界（最後に成立した）買値と売値の中間値。約定ゼロなら None
 pub fn clear<Id: Copy>(bids: &[Order<Id>], asks: &[Order<Id>]) -> Option<Clearing<Id>> {
-    let mut bids: Vec<Order<Id>> = bids.iter().filter(|o| o.qty > 0 && o.price > 0).cloned().collect();
-    let mut asks: Vec<Order<Id>> = asks.iter().filter(|o| o.qty > 0 && o.price > 0).cloned().collect();
+    let mut bids: Vec<Order<Id>> = bids
+        .iter()
+        .filter(|o| o.qty > 0 && o.price > 0)
+        .cloned()
+        .collect();
+    let mut asks: Vec<Order<Id>> = asks
+        .iter()
+        .filter(|o| o.qty > 0 && o.price > 0)
+        .cloned()
+        .collect();
     bids.sort_by_key(|o| std::cmp::Reverse(o.price));
     asks.sort_by_key(|o| o.price);
 
@@ -95,7 +103,14 @@ mod tests {
         let c = clear(&[o(1, 100, 10)], &[o(2, 90, 10)]).unwrap();
         assert_eq!(c.volume, 10);
         assert_eq!(c.price, 95);
-        assert_eq!(c.trades, vec![Trade { buyer: 1, seller: 2, qty: 10 }]);
+        assert_eq!(
+            c.trades,
+            vec![Trade {
+                buyer: 1,
+                seller: 2,
+                qty: 10
+            }]
+        );
     }
 
     #[test]
@@ -103,24 +118,35 @@ mod tests {
         // 買い5に対し売り10 → 5だけ約定
         let c = clear(&[o(1, 100, 5)], &[o(2, 90, 10)]).unwrap();
         assert_eq!(c.volume, 5);
-        assert_eq!(c.trades, vec![Trade { buyer: 1, seller: 2, qty: 5 }]);
+        assert_eq!(
+            c.trades,
+            vec![Trade {
+                buyer: 1,
+                seller: 2,
+                qty: 5
+            }]
+        );
     }
 
     #[test]
     fn multiple_orders_match_in_price_priority() {
         // 買い: 120x5, 100x5 / 売り: 80x4, 110x4
         // 120 vs 80 で4約定、120残1 vs 110 で1約定、100 vs 110 は交差せず終了
-        let c = clear(
-            &[o(1, 120, 5), o(2, 100, 5)],
-            &[o(3, 80, 4), o(4, 110, 4)],
-        )
-        .unwrap();
+        let c = clear(&[o(1, 120, 5), o(2, 100, 5)], &[o(3, 80, 4), o(4, 110, 4)]).unwrap();
         assert_eq!(c.volume, 5);
         assert_eq!(
             c.trades,
             vec![
-                Trade { buyer: 1, seller: 3, qty: 4 },
-                Trade { buyer: 1, seller: 4, qty: 1 },
+                Trade {
+                    buyer: 1,
+                    seller: 3,
+                    qty: 4
+                },
+                Trade {
+                    buyer: 1,
+                    seller: 4,
+                    qty: 1
+                },
             ]
         );
         // 限界ペアは (120, 110) → 中間値 115

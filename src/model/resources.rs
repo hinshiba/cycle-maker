@@ -52,6 +52,23 @@ impl Default for Markets {
     }
 }
 
+/// 市場の直近約定価格の推移（UI表示専用）。要素の添字がターン数（0=初期値）
+#[derive(Resource)]
+pub struct PriceHistory {
+    pub parts: Vec<i64>,
+    pub bikes: Vec<i64>,
+}
+
+impl Default for PriceHistory {
+    fn default() -> Self {
+        // 開始時点の初期価格を起点に置く（1点でも折れ線が空にならない）
+        PriceHistory {
+            parts: vec![INIT_PARTS_PRICE],
+            bikes: vec![INIT_BIKE_PRICE],
+        }
+    }
+}
+
 /// 勝敗の結果
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Outcome {

@@ -4,10 +4,10 @@
 use bevy::prelude::*;
 use bevy::state::app::StatesPlugin;
 
+use cycle_maker::SimulationPlugin;
 use cycle_maker::model::components::*;
 use cycle_maker::model::resources::*;
 use cycle_maker::states::GameState;
-use cycle_maker::SimulationPlugin;
 
 fn headless_app(seed: u64) -> App {
     let mut app = App::new();
@@ -83,7 +83,11 @@ fn reaching_goal_wins() {
         .single(app.world())
         .unwrap();
     // ターン内の支出（部品買付・維持費）があっても判定時に目標を上回る額にする
-    app.world_mut().entity_mut(player).get_mut::<Wallet>().unwrap().0 = GOAL_FUNDS + 100_000;
+    app.world_mut()
+        .entity_mut(player)
+        .get_mut::<Wallet>()
+        .unwrap()
+        .0 = GOAL_FUNDS + 100_000;
     step_turn(&mut app);
     assert!(
         matches!(
@@ -102,7 +106,11 @@ fn player_bankruptcy_loses() {
         .query_filtered::<Entity, With<Player>>()
         .single(app.world())
         .unwrap();
-    app.world_mut().entity_mut(player).get_mut::<Wallet>().unwrap().0 = -10_000;
+    app.world_mut()
+        .entity_mut(player)
+        .get_mut::<Wallet>()
+        .unwrap()
+        .0 = -10_000;
     step_turn(&mut app);
     assert!(
         matches!(
