@@ -10,6 +10,7 @@ pub mod top_bar;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts, EguiPrimaryContextPass};
 
+use crate::audio::NextTurnSfx;
 use crate::model::components::*;
 use crate::model::resources::*;
 use crate::states::GameState;
@@ -87,6 +88,7 @@ fn draw_ui(
     turn: Res<TurnCounter>,
     state: Res<State<GameState>>,
     mut next: ResMut<NextState<GameState>>,
+    mut sfx: MessageWriter<NextTurnSfx>,
     result: Res<GameResult>,
     markets: Res<Markets>,
     stats: Res<PlayerStats>,
@@ -109,6 +111,7 @@ fn draw_ui(
     let can_end = *state.get() == GameState::AwaitingInput && result.0.is_none();
     if top_bar::draw(&mut root, turn.0, player_wallet, can_end) {
         next.set(GameState::Resolving);
+        sfx.write(NextTurnSfx);
     }
     player_panel::draw(&mut root, &mut commands, &mut draft, &mut player, &ledger, &markets);
     companies_panel::draw(&mut root, &companies);

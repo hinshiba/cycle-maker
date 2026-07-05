@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
-use cycle_maker::{SimulationPlugin, UiPlugin};
+use cycle_maker::{AudioPlugin, SimulationPlugin, UiPlugin};
 
 fn main() {
     App::new()
@@ -12,6 +12,6 @@ fn main() {
             ..default()
         }))
         .add_plugins(EguiPlugin::default())
-        .add_plugins((SimulationPlugin { seed: 42 }, UiPlugin))
+        .add_plugins((SimulationPlugin { seed: 42 }, UiPlugin, AudioPlugin))
         .run();
 }
