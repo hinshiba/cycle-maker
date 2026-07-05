@@ -37,7 +37,7 @@ pub fn npc_judge(
     mut commands: Commands,
     turn: Res<TurnCounter>,
     mut result: ResMut<GameResult>,
-    q: Query<(Entity, &Wallet, &CompanyKind), Or<(Without<Bankrupt>, Without<Player>)>>,
+    q: Query<(Entity, &Wallet, &CompanyKind), (Without<Bankrupt>, Without<Player>)>,
 ) {
     for (entity, wallet, kind) in &q {
         if GOAL_FUNDS <= wallet.0 && kind == &CompanyKind::Manufacturer {
