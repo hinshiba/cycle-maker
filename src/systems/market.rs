@@ -45,11 +45,15 @@ fn settle(
                 player_stats.revenue += total;
             }
         }
-        if let Ok((_, _, mut wallet, mut inv, _, _, _, _)) = companies.get_mut(t.buyer) {
+        if let Ok((_, _, mut wallet, mut inv, _, _, _, player)) = companies.get_mut(t.buyer) {
             wallet.0 -= total;
             match good {
                 Good::Parts => inv.parts += t.qty,
                 Good::Bikes => inv.bikes += t.qty,
+            }
+            if player.is_some() && good == Good::Parts {
+                player_stats.bought_parts += t.qty;
+                player_stats.parts_cost += total;
             }
         }
     }

@@ -96,6 +96,17 @@ impl FacilityParam {
         }
     }
 
+    /// 表示用の単位（製造会社視点）
+    pub fn unit_jp(self) -> &'static str {
+        match self {
+            FacilityParam::Speed => "台/ターン",
+            FacilityParam::FixedCost => "資金/ターン",
+            FacilityParam::RunCost => "資金/台",
+            FacilityParam::Defect => "%",
+            FacilityParam::Efficiency => "個/台",
+        }
+    }
+
     pub fn current(self, f: &Facility) -> f32 {
         match self {
             FacilityParam::Speed => f.speed,

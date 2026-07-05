@@ -90,6 +90,7 @@ fn draw_ui(
     result: Res<GameResult>,
     markets: Res<Markets>,
     stats: Res<PlayerStats>,
+    ledger: Res<PlayerLedger>,
     mut player: PlayerQuery,
     companies: CompaniesQuery,
 ) -> Result {
@@ -109,7 +110,7 @@ fn draw_ui(
     if top_bar::draw(&mut root, turn.0, player_wallet, can_end) {
         next.set(GameState::Resolving);
     }
-    player_panel::draw(&mut root, &mut commands, &mut draft, &mut player);
+    player_panel::draw(&mut root, &mut commands, &mut draft, &mut player, &ledger, &markets);
     companies_panel::draw(&mut root, &companies);
     market_panel::draw(&mut root, &markets, &stats); // 中央は最後
 

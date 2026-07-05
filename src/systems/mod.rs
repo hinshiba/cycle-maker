@@ -31,6 +31,7 @@ impl Plugin for SimulationPlugin {
             .insert_resource(Markets::default())
             .init_resource::<GameResult>()
             .init_resource::<PlayerStats>()
+            .init_resource::<PlayerLedger>()
             .add_systems(Startup, setup_companies)
             .add_systems(
                 OnEnter(GameState::Resolving),
@@ -43,6 +44,7 @@ impl Plugin for SimulationPlugin {
                     upkeep::charge_upkeep,       // 6. 維持費徴収
                     bankruptcy::judge,           // 7. 倒産・勝敗判定
                     ai::npc_decide,              // 8. NPC意思決定
+                    record_player_ledger,        // プレイヤー財務指標の集計（UI用）
                     finish_turn,
                 )
                     .chain(),
@@ -110,6 +112,22 @@ fn setup_companies(mut commands: Commands, mut rng: ResMut<GameRng>) {
             SalesStats::default(),
             random_traits(&mut rng),
         ));
+    }
+}
+
+/// プレイヤーの累積財務指標を更新する（平均調達・販売価格と資金変動）。UI表示専用
+fn record_player_ledger(
+    stats: Res<PlayerStats>,
+    mut ledger: ResMut<PlayerLedger>,
+    player: Query<&Wallet, With<Player>>,
+) {
+    ledger.parts_qty += stats.bought_parts;
+    ledger.parts_cost += stats.parts_cost;
+    ledger.bikes_qty += stats.sold_bikes;
+    ledger.bikes_revenue += stats.revenue;
+    if let Ok(wallet) = player.single() {
+        ledger.last_delta = wallet.0 - ledger.prev_wallet;
+        ledger.prev_wallet = wallet.0;
     }
 }
 
