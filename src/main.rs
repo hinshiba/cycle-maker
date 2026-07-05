@@ -1,3 +1,6 @@
+// releaseビルドのみコンソールを開かなくする
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use cycle_maker::{AudioPlugin, SimulationPlugin, UiPlugin};
