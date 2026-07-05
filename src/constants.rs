@@ -1,10 +1,10 @@
-//! 全バランス係数を1箇所に集約する（仕様 §14）。
-//! 数値はすべて調整前提の仮値。ヘッドレスバランステスト（tests/balance.rs）で検証する。
+//! 全バランス係数を1箇所に集約
 
 // ---- 資金・勝敗 ----
-pub const INITIAL_FUNDS: i64 = 100_000;
-/// 勝利条件: 初期資金の10倍
-pub const GOAL_FUNDS: i64 = 1_000_000;
+/// 初期資金
+pub const INITIAL_FUNDS: i64 = 50_000;
+/// 勝利条件
+pub const GOAL_FUNDS: i64 = 500_000;
 
 // ---- 企業構成 ----
 pub const N_SUPPLIERS: usize = 3;
