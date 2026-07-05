@@ -55,10 +55,10 @@ pub const UPGRADE_EPS_MAX: f32 = 1.5;
 /// 費用の限界効果逓減 c^0.7
 pub const UPGRADE_COST_EXP: f32 = 0.7;
 /// 累積改善度による逓減の強さ: f ∝ 1/(1 + PENALTY * improved)
-pub const UPGRADE_IMPROVE_PENALTY: f32 = 3.0;
+pub const UPGRADE_IMPROVE_PENALTY: f32 = 8.0;
 /// 費用効果の基準係数 base_k（パラメータの桁に合わせたスケール）
 /// [speed, fixed_cost, run_cost, defect, efficiency]
-pub const UPGRADE_BASE_K: [f32; 5] = [0.012, 0.24, 0.024, 0.000_24, 0.002_4];
+pub const UPGRADE_BASE_K: [f32; 5] = [0.004, 0.02, 0.002, 0.000_02, 0.000_2];
 
 // ---- プレイヤーUIのスライダ範囲 ----
 pub const UI_MAX_BUY_RANGE: (i64, i64) = (0, 200);
