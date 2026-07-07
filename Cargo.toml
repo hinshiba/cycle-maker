@@ -1,0 +1,17 @@
+[package]
+name = "cycle-maker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy = { version = "0.19.0", features = ["dynamic_linking", "mp3"] }
+bevy_egui = "0.41.0"
+rand = "0.10.2"
+rand_chacha = "0.10.0"
+
+# Bevy は最適化なしだと実行が非常に遅いため、依存クレートのみ最適化する
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
